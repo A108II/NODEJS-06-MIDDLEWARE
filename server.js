@@ -31,13 +31,12 @@ const app = express();
 const path = require('path');
 const cors = require('cors'); 
 const {logger}  = require('./middleware/log_events');
-const errorHandler = require('./middleware/error_handler')
+const errorHandler = require('./middleware/error_handler');
+const { error } = require('console');
 
 const PORT = process.env.PORT || 3500;
 
-// custom middleware logger
-app.use(logger);
-app.use(errorHandler)
+
 
 const whiteList = ['https://www.google.com', 'http://127.0.0.1:5500', 'http://localhost:3500']
 // Here I define webite domains that can make a request and access to the backend node server. 
@@ -53,9 +52,11 @@ const cors_options = {
     },
     optionSuccessStatus: 200,
     }
+
+// custom middleware logger
+app.use(logger);
+
 app.use(cors(cors_options));
-
-
 
 // built-in middleware to handle urlencoded data (form data)
 // ‘content-type: application/x-www-form-urlencoded’
@@ -73,10 +74,6 @@ app.get('^/$|/index(.html)?', (req, res) => {
     //res.sendFile('./views/index.html', { root: __dirname });
     res.sendFile(path.join(__dirname, 'html_files', 'index.html'));
 });
-
-app.get('^/$|index(.html)?', (req, res) => {
-    res.sendFile(path.join(__dirname, 'html_files', 'index.html'));
-})
 
 app.get('/new(.html)?', (req, res) => {
     res.sendFile(path.join(__dirname, 'html_files', 'new.html'));
@@ -124,7 +121,7 @@ app.all('*', (req, res) => {
     // Check if the client accepts JSON
     else if (req.accepts('json')) {
         // Send a JSON response with an error message
-        res.json({ "Error": "Not found" });
+        res.json({ error: "Not found" });
     }
     // If the client accepts neither HTML nor JSON
     else {
@@ -133,8 +130,7 @@ app.all('*', (req, res) => {
     }
 });
 
-
-
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
