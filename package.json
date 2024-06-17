@@ -1,7 +1,7 @@
 {
   "name": "nodejs06",
   "version": "1.0.0",
-  "description": "",
+  "description": "Node MiddleWare",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
